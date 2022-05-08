@@ -6,27 +6,26 @@ from .forms import TodoListForm
 
 from django.views.decorators.http import require_POST
 
-# Create your views here.
 
 def index(request):
     todo_items = Todolist.objects.order_by('id')
     form = TodoListForm()
-    context = {'todo_items' :todo_items, 'form' : form}
-    return render(request,'todolist/index.html', context)
+    context = {'todo_items': todo_items, 'form': form}
+    return render(request, 'todolist/index.html', context)
+
 
 @require_POST
-def addTodoItem(request):
+def add_todo_item_view(request):
     form = TodoListForm(request.POST)
 
     if form.is_valid():
         new_todo = Todolist(text=request.POST['text'])
         new_todo.save()
-    
 
     return redirect('index')
 
 
-def completedTodo(request, todo_id)  :  
+def completed_todo(request, todo_id):
     todo = Todolist.objects.get(pk=todo_id)
     todo.completed = True
     todo.save()
@@ -34,12 +33,13 @@ def completedTodo(request, todo_id)  :
     return redirect('index')
 
 
-def deleteCompleted(request):
+def delete_completed_view(request):
     Todolist.objects.filter(completed__exact=True).delete()
 
     return redirect('index')
 
-def deleteAll(request):
+
+def delete_all_view(request):
     Todolist.objects.all().delete()
 
     return redirect('index')
